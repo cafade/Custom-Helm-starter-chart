@@ -28,11 +28,17 @@ topologySpreadConstraints:
   #   maxSkew: 1
   #   topologyKey: kubernetes.io/arch
   #   whenUnsatisfiable: DoNotSchedule
+  # - labelSelector:
+  #     matchLabels:
+  #       app.kubernetes.io/name: <CHARTNAME>
+  #   maxSkew: 1
+  #   topologyKey: node
+  #   whenUnsatisfiable: DoNotSchedule
   - labelSelector:
       matchLabels:
         app.kubernetes.io/name: <CHARTNAME>
     maxSkew: 1
-    topologyKey: node
+    topologyKey: kubernetes.io/hostname
     whenUnsatisfiable: DoNotSchedule
 
 serviceAccount:
@@ -80,6 +86,20 @@ ingress:
   #  - secretName: letsencrypt-prod-<CHARTNAME>
   #    hosts:
   #      - example.com
+
+# To be used in conjunction with cert-manager
+traefikIngresRoute:
+  enabled: false
+  ClusterIssuerName: ""
+  sslRedirect: "true"
+  entryPoints:
+    - web
+    - websecure
+  routes:
+    - host: example.com
+      path: /
+    - host: www.example.com
+      path: /
 
 resources: {}
   # limits:
@@ -132,3 +152,18 @@ nodeSelector: {}
 tolerations: []
 
 affinity: {}
+  # # Uncomment 'podAntiAffinity' Do not run more than one replica inside each node
+  # podAntiAffinity:
+  #   requiredDuringSchedulingIgnoredDuringExecution:
+  #     - labelSelector:
+  #         matchLabels:
+  #           app.kubernetes.io/name: <CHARTNAME>
+  #       topologyKey: kubernetes.io/hostname
+  # nodeAffinity:
+  #   requiredDuringSchedulingIgnoredDuringExecution:
+  #     nodeSelectorTerms:
+  #     - matchExpressions:
+  #       - key: agentpool
+  #         operator: NotIn
+  #         values:
+  #         - systempool
