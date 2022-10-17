@@ -2,6 +2,7 @@
 # This supports shell glob matching, relative path matching, and
 # negation (prefixed with !). Only one pattern per line.
 *.png
+README.md
 .DS_Store
 # Common VCS dirs
 .git/
